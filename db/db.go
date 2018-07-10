@@ -1,6 +1,6 @@
 package db
 
-import "job/db"
+import "github.com/xiaomingfuckeasylife/job/db"
 
 var Dia *db.Dialect
 
