@@ -51,7 +51,7 @@ func (u *WechatController) Get() {
 		return
 	}
 	retMap := make(map[string]interface{})
-	json.Unmarshal(retBytes,retMap)
+	json.Unmarshal(retBytes,&retMap)
 	accessToken := retMap["access_token"].(string)
 	openid := retMap["openid"].(string)
 	beego.Debug("accessToken is %s , openid is %s",accessToken,openid)
@@ -69,7 +69,7 @@ func (u *WechatController) Get() {
 		return
 	}
 
-	json.Unmarshal(retBytes,retMap)
+	json.Unmarshal(retBytes,&retMap)
 	headimgurl := retMap["headimgurl"].(string)
 	openid = retMap["openid"].(string)
 	nickname := retMap["nickname"].(string)
