@@ -3,8 +3,8 @@ package controllers
 import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/httplib"
-	"go_code/golang/go/src/pkg/encoding/json"
 	"lottery/models"
+	"encoding/json"
 )
 
 // Operations about Users
