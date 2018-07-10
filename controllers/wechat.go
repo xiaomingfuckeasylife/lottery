@@ -3,7 +3,6 @@ package controllers
 import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/httplib"
-	"Elastos.ELA/common/log"
 	"go_code/golang/go/src/pkg/encoding/json"
 	"lottery/models"
 )
@@ -43,7 +42,7 @@ func (u *WechatController) Get() {
 	req := httplib.Get(accessToken_url)
 	retBytes , err := req.Bytes()
 	if err != nil {
-		log.Error("accessToken_url error " ,err)
+		beego.Error("accessToken_url error " ,err)
 		rm.Error = 0
 		rm.Desc = "SUCCESS"
 		rm.Result = err
@@ -61,7 +60,7 @@ func (u *WechatController) Get() {
 	req = httplib.Get(userInfo_url)
 	retBytes , err = req.Bytes()
 	if err != nil {
-		log.Error("userInfo_url error " ,err)
+		beego.Error("userInfo_url error " ,err)
 		rm.Error = 0
 		rm.Desc = "SUCCESS"
 		rm.Result = err
