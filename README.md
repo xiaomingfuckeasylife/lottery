@@ -1,2 +1,0 @@
-# lottery
-ChinaJoy lottery 
