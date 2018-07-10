@@ -1,2 +1,5 @@
 lottery
 *.tmp
+/.idea/
+comments*
+main
