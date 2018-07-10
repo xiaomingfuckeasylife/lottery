@@ -1,0 +1,17 @@
+2018/07/10 18:26:26.129 [I] [asm_amd64.s:2361] http server Running on http://:8081
+2018/07/10 18:26:34.482 [D] [server.go:2694] ::1 - - [10/Jul/2018 06:26:34] "GET / HTTP/1.1 404 0" 0.000433  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36
+
+2018/07/10 18:26:35.178 [D] [server.go:2694] ::1 - - [10/Jul/2018 06:26:35] "GET /favicon.ico HTTP/1.1 404 0" 0.000263 http://localhost:8081/ Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36
+
+2018/07/10 18:26:48.588 [D] [server.go:2694] ::1 - - [10/Jul/2018 06:26:48] "GET /statis/1.txt HTTP/1.1 404 0" 0.000370  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36
+
+2018/07/10 18:27:01.813 [D] [server.go:2694] ::1 - - [10/Jul/2018 06:27:01] "GET /static/1.txt HTTP/1.1 200 0" 0.002080  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36
+
+2018/07/10 18:30:18.121 [I] [asm_amd64.s:2361] http server Running on http://:8081
+2018/07/10 18:30:38.439 [D] [server.go:2694] ::1 - - [10/Jul/2018 06:30:38] "GET /lottery/wechat/1.txt HTTP/1.1 404 0" 0.000787  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36
+
+2018/07/10 18:32:51.674 [D] [server.go:2694] ::1 - - [10/Jul/2018 06:32:51] "GET /lottery/wechat/1.txt HTTP/1.1 200 0" 0.003867  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36
+
+2018/07/10 18:35:20.057 [I] [asm_amd64.s:2361] http server Running on http://:8081
+2018/07/10 18:35:24.743 [D] [server.go:2694] ::1 - - [10/Jul/2018 06:35:24] "GET /lottery/wechat/1.txt HTTP/1.1 304 0" 0.002544  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36
+
