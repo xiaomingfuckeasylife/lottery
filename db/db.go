@@ -1,10 +1,13 @@
 package db
 
-import "github.com/xiaomingfuckeasylife/job/db"
+import (
+	"github.com/xiaomingfuckeasylife/job/db"
+	"github.com/astaxie/beego"
+)
 
 var Dia *db.Dialect
 
 func init()  {
 	Dia = &db.Dialect{}
-	Dia.Create("mysql","root:@tcp(127.0.0.1:3306)/lottery")
+	Dia.Create(beego.AppConfig.String("dbDriverName"),beego.AppConfig.String("dbDriverSource"))
 }

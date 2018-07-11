@@ -3,14 +3,15 @@ package controllers
 import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/httplib"
-	"lottery/models"
 	"encoding/json"
+	"lottery/db"
 )
 
 // Operations about Users
 type WechatController struct {
 	beego.Controller
 }
+
 
 // @Title Get
 // @Description get user by vldCode
@@ -20,21 +21,24 @@ type WechatController struct {
 // @router /:vldCode [get]
 func (u *WechatController) Get() {
 	vldCode := u.GetString(":vldCode")
+	redirectUrl := ""
 	if vldCode != "" {
-		//TODO validate validation code
 		beego.Debug("vldCode is ", vldCode)
+		retlist , err :=db.Dia.Query(" select * from activity_info where vldCode = " + vldCode)
+		if err != nil || retlist.Len() == 0{
+			beego.Error("vldCode len " , retlist.Len())
+			u.Abort("wechatLoginErr")
+		}
+		redirectUrl =retlist.Front().Value.(map[string]interface{})["redirectUrl"].(string)
+	}else{
+		beego.Error("validation code is blank")
+		u.Abort("wechatLoginErr")
 	}
-
-	rm := models.RetMsg{}
 
 	code := u.GetString("code")
 	if code == "" {
-		rm.Error = 0
-		rm.Desc = "SUCCESS"
-		rm.Result = "code can not be blank"
-		u.Data["json"] = rm
-		u.ServeJSON()
-		return
+		beego.Error("wechat code is blank")
+		u.Abort("wechatLoginErr")
 	}
 	appId := beego.AppConfig.String("AppId")
 	secret := beego.AppConfig.String("AppSecret")
@@ -43,49 +47,41 @@ func (u *WechatController) Get() {
 	retBytes , err := req.Bytes()
 	if err != nil {
 		beego.Error("accessToken_url error " ,err)
-		rm.Error = 0
-		rm.Desc = "SUCCESS"
-		rm.Result = err
-		u.Data["json"] = rm
-		u.ServeJSON()
-		return
+		u.Abort("wechatLoginErr")
 	}
 	retMap := make(map[string]interface{})
 	json.Unmarshal(retBytes,&retMap)
 	accessToken := retMap["access_token"].(string)
 	openid := retMap["openid"].(string)
-	beego.Debug("accessToken is %s , openid is %s",accessToken,openid)
+	beego.Debug("accessToken is ", accessToken,", openid is ",openid)
 
 	userInfo_url := "https://api.weixin.qq.com/sns/userinfo?access_token="+accessToken+"&openid="+openid+"&lang=zh_CN"
 	req = httplib.Get(userInfo_url)
 	retBytes , err = req.Bytes()
 	if err != nil {
 		beego.Error("userInfo_url error " ,err)
-		rm.Error = 0
-		rm.Desc = "SUCCESS"
-		rm.Result = err
-		u.Data["json"] = rm
-		u.ServeJSON()
-		return
+		u.Abort("wechatLoginErr")
 	}
 
 	json.Unmarshal(retBytes,&retMap)
 	headimgurl := retMap["headimgurl"].(string)
 	openid = retMap["openid"].(string)
 	nickname := retMap["nickname"].(string)
-	beego.Debug("headimgurl %s , openid %s,nickname %s",headimgurl,openid,nickname)
+	beego.Debug("headimgurl " ,headimgurl, " openid " ,openid, " nickname ",nickname)
 
-	resultMap := make(map[string]interface{})
-	resultMap["headimgurl"] = headimgurl
-	resultMap["nickname"] = nickname
-	resultMap["openid"] = openid
+	//resultMap := make(map[string]interface{})
+	//resultMap["headimgurl"] = headimgurl
+	//resultMap["nickname"] = nickname
+	//resultMap["openid"] = openid
 
-	rm.Error = 0
-	rm.Desc = "SUCCESS"
-	rm.Result = resultMap
+	//rm.Error = 0
+	//rm.Desc = "SUCCESS"
+	//rm.Result = resultMap
 
-	u.Data["json"] = rm
-	u.ServeJSON()
+	//u.Data["json"] = rm
+	//u.ServeJSON()
+
+	u.Redirect(redirectUrl+"?headimgurl="+headimgurl+"&nickname="+nickname+"&openid="+openid,301)
 }
 
 

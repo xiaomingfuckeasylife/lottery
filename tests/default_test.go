@@ -10,6 +10,7 @@ import (
 
 	"github.com/astaxie/beego"
 	. "github.com/smartystreets/goconvey/convey"
+	"os"
 )
 
 func init() {
@@ -36,3 +37,7 @@ func TestGet(t *testing.T) {
 	})
 }
 
+
+func TestOsArg(t *testing.T){
+	print(os.Args[0])
+}
