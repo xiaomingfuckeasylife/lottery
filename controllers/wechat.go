@@ -24,12 +24,12 @@ func (u *WechatController) Get() {
 	redirectUrl := ""
 	if vldCode != "" {
 		beego.Debug("vldCode is ", vldCode)
-		retlist , err :=db.Dia.Query(" select * from activity_info where vldCode = " + vldCode)
+		retlist , err :=db.Dia.Query(" select * from activity_info where vldCode = '" + vldCode+"'")
 		if err != nil || retlist.Len() == 0{
 			beego.Error("vldCode len " , retlist.Len())
 			u.Abort("wechatLoginErr")
 		}
-		redirectUrl =retlist.Front().Value.(map[string]interface{})["redirectUrl"].(string)
+		redirectUrl =retlist.Front().Value.(map[string]string)["redirectUrl"]
 	}else{
 		beego.Error("validation code is blank")
 		u.Abort("wechatLoginErr")
@@ -42,32 +42,37 @@ func (u *WechatController) Get() {
 	}
 	appId := beego.AppConfig.String("AppId")
 	secret := beego.AppConfig.String("AppSecret")
+
 	accessToken_url := "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appId+"&secret="+secret+"&code="+code+"&grant_type=authorization_code"
 	req := httplib.Get(accessToken_url)
-	retBytes , err := req.Bytes()
-	if err != nil {
-		beego.Error("accessToken_url error " ,err)
+	retBytes , _ := req.Bytes()
+	retMap := make(map[string]interface{})
+	err := json.Unmarshal(retBytes,&retMap)
+	if err != nil || retMap == nil{
 		u.Abort("wechatLoginErr")
 	}
-	retMap := make(map[string]interface{})
-	json.Unmarshal(retBytes,&retMap)
-	accessToken := retMap["access_token"].(string)
+	var accessToken string
+	if token , ok := retMap["access_token"];!ok {
+		u.Abort("wechatLoginErr")
+	}else{
+		accessToken = token.(string)
+	}
 	openid := retMap["openid"].(string)
 	beego.Debug("accessToken is ", accessToken,", openid is ",openid)
 
 	userInfo_url := "https://api.weixin.qq.com/sns/userinfo?access_token="+accessToken+"&openid="+openid+"&lang=zh_CN"
 	req = httplib.Get(userInfo_url)
-	retBytes , err = req.Bytes()
-	if err != nil {
-		beego.Error("userInfo_url error " ,err)
+	retBytes , _ = req.Bytes()
+	err = json.Unmarshal(retBytes,&retMap)
+	if err != nil || retMap == nil{
 		u.Abort("wechatLoginErr")
 	}
 
-	json.Unmarshal(retBytes,&retMap)
 	headimgurl := retMap["headimgurl"].(string)
 	openid = retMap["openid"].(string)
 	nickname := retMap["nickname"].(string)
-	beego.Debug("headimgurl " ,headimgurl, " openid " ,openid, " nickname ",nickname)
+
+	beego.Debug("headimgurl " ,headimgurl, " nickname ",nickname)
 
 	//resultMap := make(map[string]interface{})
 	//resultMap["headimgurl"] = headimgurl
