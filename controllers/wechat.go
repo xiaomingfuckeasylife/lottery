@@ -12,12 +12,8 @@ type WechatController struct {
 	beego.Controller
 }
 
+const WECHAT_LOGIN_REDIRECT = "wechatLoginErr"
 
-// @Title Get
-// @Description get user by vldCode
-// @Param	uid		path 	string	true		"The key for staticblock"
-// @Success 200 {object} models.Wechat
-// @Failure 403 :vldCode is empty
 // @router /:vldCode [get]
 func (u *WechatController) Get() {
 	vldCode := u.GetString(":vldCode")
@@ -27,18 +23,18 @@ func (u *WechatController) Get() {
 		retlist , err :=db.Dia.Query(" select * from activity_info where vldCode = '" + vldCode+"'")
 		if err != nil || retlist.Len() == 0{
 			beego.Error("vldCode len " , retlist.Len())
-			u.Abort("wechatLoginErr")
+			u.Abort(WECHAT_LOGIN_REDIRECT)
 		}
 		redirectUrl =retlist.Front().Value.(map[string]string)["redirectUrl"]
 	}else{
 		beego.Error("validation code is blank")
-		u.Abort("wechatLoginErr")
+		u.Abort(WECHAT_LOGIN_REDIRECT)
 	}
 
 	code := u.GetString("code")
 	if code == "" {
 		beego.Error("wechat code is blank")
-		u.Abort("wechatLoginErr")
+		u.Abort(WECHAT_LOGIN_REDIRECT)
 	}
 	appId := beego.AppConfig.String("AppId")
 	secret := beego.AppConfig.String("AppSecret")
@@ -49,23 +45,36 @@ func (u *WechatController) Get() {
 	retMap := make(map[string]interface{})
 	err := json.Unmarshal(retBytes,&retMap)
 	if err != nil || retMap == nil{
-		u.Abort("wechatLoginErr")
+		u.Abort(WECHAT_LOGIN_REDIRECT)
 	}
 	var accessToken string
 	if token , ok := retMap["access_token"];!ok {
-		u.Abort("wechatLoginErr")
+		u.Abort(WECHAT_LOGIN_REDIRECT)
 	}else{
 		accessToken = token.(string)
 	}
 	openid := retMap["openid"].(string)
 	beego.Debug("accessToken is ", accessToken,", openid is ",openid)
 
+	weL , err := db.Dia.Query("select * from activity_wechat_users where wxOpenid = '" + openid +"'")
+	if err != nil {
+		beego.Error(err)
+		u.Abort(WECHAT_LOGIN_REDIRECT)
+	}
+
+	if weL.Len() > 0 {
+		we := weL.Front().Value.(map[string]string)
+		u.Redirect(redirectUrl+"?headimgurl="+we["wxImg"]+"&nickname="+we["wxNickName"]+"&openid="+we["wxOpenid"]+"&code="+vldCode,301)
+		return
+	}
+
 	userInfo_url := "https://api.weixin.qq.com/sns/userinfo?access_token="+accessToken+"&openid="+openid+"&lang=zh_CN"
 	req = httplib.Get(userInfo_url)
 	retBytes , _ = req.Bytes()
 	err = json.Unmarshal(retBytes,&retMap)
 	if err != nil || retMap == nil{
-		u.Abort("wechatLoginErr")
+		beego.Error(err)
+		u.Abort(WECHAT_LOGIN_REDIRECT)
 	}
 
 	headimgurl := retMap["headimgurl"].(string)
@@ -73,44 +82,12 @@ func (u *WechatController) Get() {
 	nickname := retMap["nickname"].(string)
 
 	beego.Debug("headimgurl " ,headimgurl, " nickname ",nickname)
+	// save user info to db
+	_ , err = db.Dia.Save("insert into activity_wechat_users(wxNickName,wxOpenid,wxImg) values('"+nickname+"','"+openid+"','"+headimgurl+"')")
+	if err != nil{
+		beego.Error(err)
+		u.Abort(WECHAT_LOGIN_REDIRECT)
+	}
 
-	//resultMap := make(map[string]interface{})
-	//resultMap["headimgurl"] = headimgurl
-	//resultMap["nickname"] = nickname
-	//resultMap["openid"] = openid
-
-	//rm.Error = 0
-	//rm.Desc = "SUCCESS"
-	//rm.Result = resultMap
-
-	//u.Data["json"] = rm
-	//u.ServeJSON()
-
-	u.Redirect(redirectUrl+"?headimgurl="+headimgurl+"&nickname="+nickname+"&openid="+openid,301)
+	u.Redirect(redirectUrl+"?headimgurl="+headimgurl+"&nickname="+nickname+"&openid="+openid+"&code="+vldCode,301)
 }
-
-
-/*
-String code = getPara("code");
-String state  = getPara("state");
-System.out.println("code is " + code + " state is " + state );
-String appId = Constant.APP_ID;
-String secret = Constant.APP_SECRET;
-// get access_token
-String accessToken_url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appId+"&secret="+secret+"&code="+code+"&grant_type=authorization_code";
-String retJson = MyHttpKit.get(accessToken_url);
-System.out.println("retJson :" + retJson);
-Map map = (Map) JSON.parse(retJson);
-String accessToken = (String) map.get("access_token");
-String openid = (String) map.get("openid");
-System.out.println("openid : " + openid + " accessToken :" + accessToken);
-// get userInfo
-String userInfo_url = "https://api.weixin.qq.com/sns/userinfo?access_token="+accessToken+"&openid="+openid+"&lang=zh_CN";
-String retJson2 = MyHttpKit.get(userInfo_url);
-System.out.println("userinfo :" + retJson2);
-Map userInfoMap = (Map) JSON.parse(retJson2);
-String headimgurl = (String) userInfoMap.get("headimgurl");
-String openId = (String) userInfoMap.get("openid");
-String name = (String)userInfoMap.get("nickname");
-System.out.println("nickName is " + name);
- */
