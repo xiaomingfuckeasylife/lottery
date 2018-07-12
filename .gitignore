@@ -4,3 +4,4 @@ lottery
 /.idea/
 comments*
 main
+/logs/

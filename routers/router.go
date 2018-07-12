@@ -30,6 +30,11 @@ func init() {
 				&controllers.WechatController{},
 			),
 		),
+		beego.NSNamespace("/validationCode",
+			beego.NSInclude(
+				&controllers.ValidationCodeController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }

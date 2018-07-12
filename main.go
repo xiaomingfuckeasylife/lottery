@@ -1,27 +1,24 @@
 package main
 
 import (
-	_ "lottery/routers"
-
 	"github.com/astaxie/beego"
-	"net/http"
 	"html/template"
+	"lottery/jobs"
+	_ "lottery/routers"
+	"net/http"
 )
 
-
-func wechatLoginErr(rw http.ResponseWriter,r *http.Request)  {
-	t,_:= template.ParseFiles(beego.BConfig.WebConfig.ViewsPath +"/wechatLoginErr.html")
-	//data :=make(map[string]interface{})
-	//data["content"] = "page not found"
+func wechatLoginErr(rw http.ResponseWriter, r *http.Request) {
+	t, _ := template.ParseFiles(beego.BConfig.WebConfig.ViewsPath + "/wechatLoginErr.html")
 	data := map[string]interface{}{
-		"Title":        "Login Error",
-		"Content":      template.HTML("<br> Invalid QR code </br>"),
+		"Title":   "Login Error",
+		"Content": template.HTML("<br> Invalid QR code </br>"),
 	}
 	t.Execute(rw, data)
 }
 
 func main() {
-	beego.ErrorHandler("wechatLoginErr",wechatLoginErr)
+	beego.ErrorHandler("wechatLoginErr", wechatLoginErr)
 	if beego.BConfig.RunMode == "dev" {
 		beego.BConfig.WebConfig.DirectoryIndex = true
 		beego.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"
@@ -32,5 +29,5 @@ func main() {
 
 func init() {
 	beego.SetLogger("file", `{"filename":"lottery.log"}`)
+	go jobs.Process()
 }
-
