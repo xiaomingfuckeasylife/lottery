@@ -11,8 +11,8 @@ type ValidationCodeController struct {
 
 // @Title Get
 // @Description get validation code
-// @Param	uid		path 	string	true		"The key for staticblock"
-// @Success 200 {object} models.RetMsg
+// @Param	secret		path 	string	true		"the access token to get validation code"
+// @Success 200 
 // @router /:secret [get]
 func (u *ValidationCodeController) Get() {
 	secret := u.GetString(":secret")
