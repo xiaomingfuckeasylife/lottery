@@ -13,7 +13,7 @@
             "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
         }
     },
-    "basePath": "/v1",
+    "basePath": "/lottery/",
     "paths": {
         "/object/": {
             "get": {
@@ -328,9 +328,45 @@
                     }
                 }
             }
+        },
+        "/validationCode/{secret}": {
+            "get": {
+                "tags": [
+                    "validationCode"
+                ],
+                "description": "get validation code",
+                "operationId": "ValidationCodeController.Get",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "uid",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.RetMsg"
+                        }
+                    }
+                }
+            }
+        },
+        "/wechat/{vldCode}": {
+            "get": {
+                "tags": [
+                    "wechat"
+                ]
+            }
         }
     },
     "definitions": {
+        ".false": {
+            "type": "object"
+        },
         "models.Object": {
             "title": "Object",
             "type": "object",
@@ -366,6 +402,22 @@
                 }
             }
         },
+        "models.RetMsg": {
+            "title": "RetMsg",
+            "type": "object",
+            "properties": {
+                "Desc": {
+                    "type": "string"
+                },
+                "Error": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Result": {
+                    "$ref": "#/definitions/1392.0xc420390a50.false"
+                }
+            }
+        },
         "models.User": {
             "title": "User",
             "type": "object",
@@ -392,6 +444,10 @@
         },
         {
             "name": "user",
+            "description": "Operations about Users\n"
+        },
+        {
+            "name": "wechat",
             "description": "Operations about Users\n"
         }
     ]
