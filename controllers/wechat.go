@@ -22,7 +22,7 @@ func (u *WechatController) Get() {
 		beego.Debug("vldCode is ", vldCode)
 		retlist , err :=db.Dia.Query(" select * from activity_info where vldCode = '" + vldCode+"'")
 		if err != nil || retlist.Len() == 0{
-			beego.Error("vldCode len " , retlist.Len())
+			beego.Error("vldCode len " , retlist.Len(),err)
 			u.Abort(WECHAT_LOGIN_REDIRECT)
 		}
 		redirectUrl =retlist.Front().Value.(map[string]string)["redirectUrl"]
@@ -45,10 +45,12 @@ func (u *WechatController) Get() {
 	retMap := make(map[string]interface{})
 	err := json.Unmarshal(retBytes,&retMap)
 	if err != nil || retMap == nil{
+		beego.Error(err)
 		u.Abort(WECHAT_LOGIN_REDIRECT)
 	}
 	var accessToken string
 	if token , ok := retMap["access_token"];!ok {
+		beego.Error("acccessToken is blank")
 		u.Abort(WECHAT_LOGIN_REDIRECT)
 	}else{
 		accessToken = token.(string)

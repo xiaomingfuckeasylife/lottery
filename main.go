@@ -4,7 +4,6 @@ import (
 	_ "lottery/routers"
 
 	"github.com/astaxie/beego"
-	"lottery/db"
 	"net/http"
 	"html/template"
 )
@@ -28,7 +27,6 @@ func main() {
 		beego.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"
 		//beego.SetStaticPath("/lottery/wechat", "wechat")
 	}
-	defer db.Dia.Close()
 	beego.Run()
 }
 
