@@ -12,7 +12,7 @@ type ValidationCodeController struct {
 // @Title Get
 // @Description get validation code
 // @Param	secret		path 	string	true		"the access token to get validation code"
-// @Success 200 
+// @Success 200
 // @router /:secret [get]
 func (u *ValidationCodeController) Get() {
 	secret := u.GetString(":secret")

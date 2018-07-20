@@ -22,27 +22,24 @@ type RetMsg struct {
 	Desc   string
 }
 
-type Activity_info struct {
-	Act_id       int    `orm:"auto";orm:"column(Id)"`
-	SecretCode   string `orm:"column(secretCode)"`
-	VldCode      string `orm:"column(VldCode)"`
-	Remark       string
-	Name         string
-	RenewInteval int    `orm:"column(RenewInteval)"`
-	Status       int
-	User_id      int
-	PubAddr      string `orm:"column(PubAddr)"`
-	PriKey       string `orm:"column(PriKey)"`
+type Elastos_info struct {
+	Info_id       int    `orm:"auto";orm:"column(Id)"`
+	SecretCode    string `orm:"column(secretCode)"`
+	VldCode       string `orm:"column(VldCode)"`
+	Remark        string
+	Name          string
+	RenewInteval  int    `orm:"column(RenewInteval)"`
+	Status        int
 }
 
 func init() {
-	orm.RegisterModel(new(Activity_info))
+	orm.RegisterModel(new(Elastos_info))
 	db.Orm = orm.NewOrm()
 }
 
 func GetVldCode(secret string) (RetMsg, error) {
-	qS := db.Orm.QueryTable("activity_info")
-	var info Activity_info
+	qS := db.Orm.QueryTable("Elastos_info")
+	var info Elastos_info
 	err := qS.Filter("SecretCode", secret).One(&info, "VldCode")
 	if err != nil {
 		return RetMsg{}, err

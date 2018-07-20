@@ -4,7 +4,8 @@
     "GetBlockByHeight":"http://node-regtest-03-01.eadd.co:23334/api/v1/block/details/height/",
     "GetBlockByHash": "http://node-regtest-03-01.eadd.co:23334/api/v1/block/details/hash/",
     "GetTransactionByHash": "http://node-regtest-03-01.eadd.co:23334/api/v1/transaction/",
-    "SendTransfer":"https://fun-test.elastos.org/api/v1/transfer"
+    "SendTransfer":"https://fun-test.elastos.org/api/v1/transfer",
+    "GenAddr":"https://fun-test.elastos.org/api/v1/genAddress"
   },
   "Job": {
     "TxPeriod": 10,
@@ -16,5 +17,7 @@
     "SenderPubAddr":"EbxU18T3M9ufnrkRY7NLt6sKyckDW4VAsA",
     "SenderPrivKey":"C740869D015E674362B1F441E3EDBE1CBCF4FE8B709AA1A77E5CCA2C92BAF99D"
   },
-  "InitialHeight":35300
+  "InitialHeight":44400,
+  "InitialAddressNum":"100",
+  "InitialAddressFee":"0.0001"
 }

@@ -20,7 +20,7 @@ func (u *WechatController) Get() {
 	redirectUrl := ""
 	if vldCode != "" {
 		beego.Debug("vldCode is ", vldCode)
-		retlist , err :=db.Dia.Query(" select * from activity_info where vldCode = '" + vldCode+"'")
+		retlist , err :=db.Dia.Query(" select * from elastos_info where vldCode = '" + vldCode+"'")
 		if err != nil || retlist.Len() == 0{
 			beego.Error("vldCode len " , retlist.Len(),err)
 			u.Abort(WECHAT_LOGIN_REDIRECT)
@@ -58,7 +58,7 @@ func (u *WechatController) Get() {
 	openid := retMap["openid"].(string)
 	beego.Debug("accessToken is ", accessToken,", openid is ",openid)
 
-	weL , err := db.Dia.Query("select * from activity_wechat_users where wxOpenid = '" + openid +"'")
+	weL , err := db.Dia.Query("select * from elastos_members where openid = '" + openid +"'")
 	if err != nil {
 		beego.Error(err)
 		u.Abort(WECHAT_LOGIN_REDIRECT)
@@ -85,7 +85,7 @@ func (u *WechatController) Get() {
 
 	beego.Debug("headimgurl " ,headimgurl, " nickname ",nickname)
 	// save user info to db
-	_ , err = db.Dia.Save("insert into activity_wechat_users(wxNickName,wxOpenid,wxImg) values('"+nickname+"','"+openid+"','"+headimgurl+"')")
+	_ , err = db.Dia.Exec("insert into elastos_members(nickName,openid,headimgurl) values('"+nickname+"','"+openid+"','"+headimgurl+"')")
 	if err != nil{
 		beego.Error(err)
 		u.Abort(WECHAT_LOGIN_REDIRECT)

@@ -22,7 +22,7 @@ func main() {
 	if beego.BConfig.RunMode == "dev" {
 		beego.BConfig.WebConfig.DirectoryIndex = true
 		beego.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"
-		//beego.SetStaticPath("/lottery/wechat", "wechat")
+		beego.SetStaticPath("/lottery/wechat", "wechat")
 	}
 	beego.Run()
 }
@@ -30,4 +30,5 @@ func main() {
 func init() {
 	beego.SetLogger("file", `{"filename":"lottery.log"}`)
 	go jobs.Process()
+	go jobs.InitAddr()
 }
